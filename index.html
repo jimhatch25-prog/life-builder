@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>helping you build your life</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f8f6;
+      --surface: #ffffff;
+      --border: #e8e8e4;
+      --text: #1a1a1a;
+      --muted: #999;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --bar-bg: #e8e8e4;
+      --radius: 12px;
+      --shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+
+    .container { max-width: 640px; margin: 0 auto; }
+
+    /* ── Header ── */
+    header { margin-bottom: 32px; }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .date-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Score bar ── */
+    .score-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+    }
+
+    .score-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .score-num {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .score-max { font-size: 0.85rem; color: var(--muted); margin-left: 2px; }
+
+    .bar-track {
+      height: 10px;
+      background: var(--bar-bg);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      width: 0%;
+    }
+
+    .bar-fill.full { background: linear-gradient(90deg, #16a34a, #15803d); }
+
+    .congrats {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--green);
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .congrats.show { display: flex; }
+
+    /* ── Section title row ── */
+    .section-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .edit-hint {
+      font-size: 0.72rem;
+      color: #bbb;
+      font-style: italic;
+    }
+
+    /* ── Task cards ── */
+    .task-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: var(--shadow);
+      user-select: none;
+    }
+
+    .task-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+    .task-card.done {
+      background: var(--green-light);
+      border-color: #bbf7d0;
+    }
+
+    .task-card.custom { border-style: dashed; }
+
+    /* checkbox */
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      background: white;
+    }
+
+    .task-card.done .checkbox {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .checkbox svg { display: none; }
+    .task-card.done .checkbox svg { display: block; }
+
+    /* body text */
+    .task-body { flex: 1; min-width: 0; }
+
+    .task-name {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .task-card.done .task-name {
+      color: var(--green);
+      text-decoration: line-through;
+      text-decoration-color: #86efac;
+    }
+
+    .task-desc {
+      font-size: 0.74rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* points badge */
+    .task-pts {
+      flex-shrink: 0;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-light);
+      border-radius: 20px;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+
+    .task-card.done .task-pts { color: var(--green); background: #dcfce7; }
+
+    /* icon buttons */
+    .icon-btn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ccc;
+      padding: 3px;
+      line-height: 1;
+      transition: color 0.15s;
+      border-radius: 5px;
+    }
+
+    .icon-btn:hover { color: var(--accent); background: var(--accent-light); }
+    .icon-btn.del:hover { color: #dc2626; background: #fef2f2; }
+
+    /* ── Inline edit modal ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .modal h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 5px;
+    }
+
+    .field input, .field select, .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      resize: none;
+    }
+
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .btn-save {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-save:hover { opacity: 0.85; }
+
+    /* ── Add custom row ── */
+    .add-custom {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .add-custom input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .add-custom input:focus { border-color: var(--accent); }
+
+    .add-custom select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .add-custom button {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .add-custom button:hover { opacity: 0.85; }
+
+    /* ── Footer ── */
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+    }
+
+    .reset-btn {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .reset-btn:hover { color: #dc2626; border-color: #fca5a5; }
+
+    .streak { font-size: 0.8rem; color: var(--muted); }
+    .streak span { font-weight: 600; color: #f59e0b; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>helping you build your life</h1>
+    <div class="date-label" id="dateLabel"></div>
+  </header>
+
+  <!-- Score bar -->
+  <div class="score-section">
+    <div class="score-header">
+      <span class="score-label">today's points</span>
+      <div>
+        <span class="score-num" id="scoreNum">0</span>
+        <span class="score-max" id="scoreMax">/ 12</span>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="barFill"></div>
+    </div>
+    <div class="congrats" id="congrats">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Perfect day — every habit complete.
+    </div>
+  </div>
+
+  <!-- Default tasks -->
+  <div class="section-row">
+    <span class="section-title">daily habits</span>
+    <span class="edit-hint">— click ✎ to customise any habit</span>
+  </div>
+  <div class="task-list" id="taskList"></div>
+
+  <!-- Custom tasks -->
+  <div class="section-row" style="margin-top:24px;">
+    <span class="section-title">your own habits</span>
+  </div>
+  <div class="task-list" id="customList"></div>
+
+  <div class="add-custom">
+    <input type="text" id="customInput" placeholder="Add a habit…" maxlength="80" />
+    <select id="customPts">
+      <option value="1">1 pt</option>
+      <option value="2">2 pts</option>
+      <option value="3">3 pts</option>
+    </select>
+    <button onclick="addCustomTask()">Add</button>
+  </div>
+
+  <div class="footer-row">
+    <button class="reset-btn" onclick="confirmReset()">↺ reset today</button>
+    <div class="streak">streak <span id="streakNum">0</span> days</div>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>Edit habit</h2>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="editName" maxlength="80" />
+    </div>
+    <div class="field">
+      <label>Description <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <textarea id="editDesc" rows="2" maxlength="120"></textarea>
+    </div>
+    <div class="field">
+      <label>Points</label>
+      <select id="editPts">
+        <option value="1">1 point</option>
+        <option value="2">2 points</option>
+        <option value="3">3 points</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Default tasks (source of truth; overrides stored in localStorage) ──
+  const DEFAULTS = [
+    { id: 'read',    name: 'Read 10 pages',              desc: 'Any book counts',                        pts: 2 },
+    { id: 'media',   name: 'Watch longform content',      desc: 'Podcast, documentary, or lecture',       pts: 1 },
+    { id: 'paper',   name: 'Read an academic paper',      desc: 'Any research or non-fiction paper',      pts: 1 },
+    { id: 'write',   name: 'Write 200 words',             desc: 'Journaling, notes, documenting life',    pts: 2 },
+    { id: 'teach',   name: 'Explain what you learned',    desc: 'To a person, or out loud to yourself',   pts: 1 },
+    { id: 'phone',   name: 'Phone-free morning & night',  desc: 'No phone in the first + last 30 min',    pts: 1 },
+    { id: 'offline', name: '1 hour completely offline',   desc: 'No phone, no notifications — just you',  pts: 1 },
+    { id: 'sleep',   name: 'Sleep 8+ hours',              desc: 'Consistent, quality sleep',              pts: 2 },
+    { id: 'cardio',  name: '20 min of movement',          desc: 'Any cardio or physical activity',        pts: 1 },
+  ];
+
+  const todayKey = () => new Date().toISOString().slice(0, 10);
+
+  // ── Storage ──
+  function load() {
+    const raw = localStorage.getItem('lifeBuilder');
+    const data = raw ? JSON.parse(raw) : {};
+    if (data.date !== todayKey()) {
+      // new day: reset check-ins, handle streak
+      if (data.prevDate) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yKey = yesterday.toISOString().slice(0, 10);
+        if (data.prevDate === yKey && data.prevComplete) {
+          data.streak = (data.streak || 0) + 1;
+        } else if (data.prevDate !== yKey) {
+          data.streak = 0;
+        }
+      }
+      data.date = todayKey();
+      data.checked = {};
+      data.prevDate = null;
+      data.prevComplete = false;
+    }
+    data.customs  = data.customs  || [];
+    data.overrides = data.overrides || {}; // edits to default tasks: { id: {name,desc,pts} }
+    return data;
+  }
+
+  function save(d) { localStorage.setItem('lifeBuilder', JSON.stringify(d)); }
+
+  // Merge default task with any stored override
+  function resolveTask(t, data) {
+    const ov = data.overrides[t.id];
+    return ov ? { ...t, ...ov } : { ...t };
+  }
+
+  // ── Score helpers ──
+  function allTasks(data) {
+    return [
+      ...DEFAULTS.map(t => resolveTask(t, data)),
+      ...data.customs,
+    ];
+  }
+
+  function totalMax(data) {
+    return allTasks(data).reduce((s, t) => s + t.pts, 0);
+  }
+
+  function totalScore(data) {
+    return allTasks(data).reduce((s, t) => s + (data.checked[t.id] ? t.pts : 0), 0);
+  }
+
+  // ── Render ──
+  function render() {
+    const data = load();
+
+    document.getElementById('dateLabel').textContent =
+      new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+    document.getElementById('streakNum').textContent = data.streak || 0;
+
+    const score = totalScore(data);
+    const max   = totalMax(data);
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('scoreMax').textContent = '/ ' + max;
+
+    const pct  = max > 0 ? Math.round((score / max) * 100) : 0;
+    const fill = document.getElementById('barFill');
+    fill.style.width = pct + '%';
+    fill.classList.toggle('full', score === max && max > 0);
+    document.getElementById('congrats').classList.toggle('show', score === max && max > 0);
+
+    // default tasks
+    const list = document.getElementById('taskList');
+    list.innerHTML = '';
+    DEFAULTS.forEach(t => list.appendChild(makeCard(resolveTask(t, data), data, 'default')));
+
+    // custom tasks
+    const cList = document.getElementById('customList');
+    cList.innerHTML = '';
+    data.customs.forEach(t => cList.appendChild(makeCard(t, data, 'custom')));
+  }
+
+  function makeCard(t, data, kind) {
+    const done = !!data.checked[t.id];
+    const card = document.createElement('div');
+    card.className = 'task-card' + (done ? ' done' : '') + (kind === 'custom' ? ' custom' : '');
+
+    card.innerHTML = `
+      <div class="checkbox">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="task-body">
+        <div class="task-name">${escHtml(t.name)}</div>
+        ${t.desc ? `<div class="task-desc">${escHtml(t.desc)}</div>` : ''}
+      </div>
+      <div class="task-pts">+${t.pts} pt${t.pts !== 1 ? 's' : ''}</div>
+      <button class="icon-btn" title="Edit" onclick="openEdit('${t.id}', '${kind}', event)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
+      ${kind === 'custom' ? `
+      <button class="icon-btn del" title="Remove" onclick="removeCustom('${t.id}', event)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>` : ''}
+    `;
+
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.icon-btn')) return;
+      toggle(t.id);
+    });
+    return card;
+  }
+
+  // ── Actions ──
+  function toggle(id) {
+    const data = load();
+    data.checked[id] = !data.checked[id];
+    const score = totalScore(data);
+    const max   = totalMax(data);
+    data.prevComplete = score === max && max > 0;
+    data.prevDate = data.date;
+    save(data);
+    render();
+  }
+
+  function addCustomTask() {
+    const input = document.getElementById('customInput');
+    const name  = input.value.trim();
+    if (!name) { input.focus(); return; }
+    const pts  = parseInt(document.getElementById('customPts').value);
+    const data = load();
+    data.customs.push({ id: 'c_' + Date.now(), name, pts });
+    save(data);
+    input.value = '';
+    render();
+  }
+
+  function removeCustom(id, e) {
+    e.stopPropagation();
+    const data = load();
+    data.customs = data.customs.filter(t => t.id !== id);
+    delete data.checked[id];
+    save(data);
+    render();
+  }
+
+  function confirmReset() {
+    if (!confirm("Reset all of today's check-ins?")) return;
+    const data = load();
+    data.checked = {};
+    data.prevComplete = false;
+    save(data);
+    render();
+  }
+
+  // ── Inline edit modal ──
+  let _editId   = null;
+  let _editKind = null;
+
+  function openEdit(id, kind, e) {
+    e.stopPropagation();
+    _editId   = id;
+    _editKind = kind;
+
+    const data = load();
+    let t;
+    if (kind === 'default') {
+      const base = DEFAULTS.find(d => d.id === id);
+      t = resolveTask(base, data);
+    } else {
+      t = data.customs.find(c => c.id === id);
+    }
+
+    document.getElementById('editName').value = t.name;
+    document.getElementById('editDesc').value = t.desc || '';
+    document.getElementById('editPts').value  = String(t.pts);
+    document.getElementById('modalBackdrop').classList.add('open');
+    setTimeout(() => document.getElementById('editName').focus(), 50);
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== document.getElementById('modalBackdrop')) return;
+    document.getElementById('modalBackdrop').classList.remove('open');
+    _editId = _editKind = null;
+  }
+
+  function saveEdit() {
+    const name = document.getElementById('editName').value.trim();
+    if (!name) { document.getElementById('editName').focus(); return; }
+    const desc = document.getElementById('editDesc').value.trim();
+    const pts  = parseInt(document.getElementById('editPts').value);
+
+    const data = load();
+    if (_editKind === 'default') {
+      data.overrides[_editId] = { name, desc, pts };
+    } else {
+      const c = data.customs.find(t => t.id === _editId);
+      if (c) { c.name = name; c.desc = desc; c.pts = pts; }
+    }
+    save(data);
+    document.getElementById('modalBackdrop').classList.remove('open');
+    _editId = _editKind = null;
+    render();
+  }
+
+  // close modal on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.getElementById('modalBackdrop').classList.remove('open');
+      _editId = _editKind = null;
+    }
+  });
+
+  document.getElementById('customInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addCustomTask();
+  });
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  render();
+</script>
+</body>
+</html>

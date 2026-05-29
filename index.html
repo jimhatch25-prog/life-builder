@@ -398,6 +398,150 @@
 
     .streak { font-size: 0.8rem; color: var(--muted); }
     .streak span { font-weight: 600; color: #f59e0b; }
+
+    /* ── Share button ── */
+    .share-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.15s;
+    }
+    .share-btn:hover { opacity: 0.85; }
+
+    /* ── Share modal ── */
+    .share-modal {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    .share-modal h2 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .share-modal p  { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+
+    .share-link-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .share-link-box input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.78rem;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--muted);
+      outline: none;
+      min-width: 0;
+    }
+    .copy-btn {
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: var(--bg); }
+    .copy-btn.copied { color: var(--green); border-color: #bbf7d0; }
+
+    .share-apps {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .share-app-btn {
+      flex: 1;
+      min-width: 100px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .share-app-btn:hover { background: var(--bg); }
+    .share-app-btn.whatsapp { border-color: #25d366; color: #128c4f; }
+    .share-app-btn.whatsapp:hover { background: #f0fdf4; }
+    .share-app-btn.telegram { border-color: #2ca5e0; color: #0e7bb5; }
+    .share-app-btn.telegram:hover { background: #eff6ff; }
+    .share-app-btn.twitter  { border-color: #1d9bf0; color: #1d9bf0; }
+    .share-app-btn.twitter:hover  { background: #eff6ff; }
+
+    /* ── Read-only share view ── */
+    .share-view {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    .share-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .share-card-header { margin-bottom: 20px; }
+    .share-card-header h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .share-card-header p  { font-size: 0.8rem; color: var(--muted); }
+    .share-score-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .share-score-big { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; }
+    .share-score-label { font-size: 0.82rem; color: var(--muted); }
+    .share-score-label strong { color: var(--text); display: block; font-size: 1rem; }
+    .share-habits { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .share-habit-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .share-habit-row.done { background: var(--green-light); color: var(--green); font-weight: 500; }
+    .share-habit-row.undone { background: var(--bg); color: #bbb; text-decoration: line-through; }
+    .share-habit-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .share-habit-row.done   .share-habit-dot { background: var(--green); }
+    .share-habit-row.undone .share-habit-dot { background: #ddd; }
+    .share-cta {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .share-cta a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    .share-cta a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -451,7 +595,45 @@
 
   <div class="footer-row">
     <button class="reset-btn" onclick="confirmReset()">↺ reset today</button>
-    <div class="streak">streak <span id="streakNum">0</span> days</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="streak">streak <span id="streakNum">0</span> days</div>
+      <button class="share-btn" onclick="openShare()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        Share my day
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Share modal -->
+<div class="modal-backdrop" id="shareBackdrop" onclick="closeShare(event)">
+  <div class="share-modal" onclick="event.stopPropagation()">
+    <h2>📤 Share your day</h2>
+    <p>Send this link to friends so they can see your achievements today.</p>
+    <div class="share-link-box">
+      <input type="text" id="shareLinkInput" readonly />
+      <button class="copy-btn" id="copyBtn" onclick="copyLink()">Copy</button>
+    </div>
+    <div class="share-apps">
+      <button class="share-app-btn whatsapp" onclick="shareWhatsApp()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.559 4.126 1.535 5.862L.057 23.704a.75.75 0 0 0 .921.921l5.84-1.478A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.696-.5-5.25-1.373l-.375-.214-3.9.988.988-3.9-.214-.375A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        WhatsApp
+      </button>
+      <button class="share-app-btn telegram" onclick="shareTelegram()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        Telegram
+      </button>
+      <button class="share-app-btn twitter" onclick="shareTwitter()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X / Twitter
+      </button>
+    </div>
+    <div style="margin-top:16px;text-align:right;">
+      <button class="btn-cancel" onclick="document.getElementById('shareBackdrop').classList.remove('open')">Close</button>
+    </div>
   </div>
 </div>
 
@@ -724,7 +906,137 @@
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  render();
+  // ── Share ──
+  function buildSharePayload() {
+    const data  = load();
+    const tasks = allTasks(data);
+    return {
+      date:   data.date,
+      score:  totalScore(data),
+      max:    totalMax(data),
+      streak: data.streak || 0,
+      tasks:  tasks.map(t => ({ name: t.name, pts: t.pts, done: !!data.checked[t.id] })),
+    };
+  }
+
+  function buildShareUrl() {
+    const payload = buildSharePayload();
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const base    = window.location.href.split('?')[0].split('#')[0];
+    return base + '?share=' + encoded;
+  }
+
+  function openShare() {
+    const url = buildShareUrl();
+    document.getElementById('shareLinkInput').value = url;
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn.textContent = 'Copy';
+    copyBtn.classList.remove('copied');
+    document.getElementById('shareBackdrop').classList.add('open');
+  }
+
+  function closeShare(e) {
+    if (e && e.target !== document.getElementById('shareBackdrop')) return;
+    document.getElementById('shareBackdrop').classList.remove('open');
+  }
+
+  function copyLink() {
+    const url = document.getElementById('shareLinkInput').value;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function shareText() {
+    const d = buildSharePayload();
+    const pct = d.max > 0 ? Math.round((d.score / d.max) * 100) : 0;
+    const done = d.tasks.filter(t => t.done).map(t => '✅ ' + t.name).join('\n');
+    return `🌱 My life-builder score today: ${d.score}/${d.max} (${pct}%)\n\n${done}\n\n${buildShareUrl()}`;
+  }
+
+  function shareWhatsApp() {
+    window.open('https://wa.me/?text=' + encodeURIComponent(shareText()), '_blank');
+  }
+
+  function shareTelegram() {
+    window.open('https://t.me/share/url?url=' + encodeURIComponent(buildShareUrl()) + '&text=' + encodeURIComponent('Check out my daily habits score 🌱'), '_blank');
+  }
+
+  function shareTwitter() {
+    const d = buildSharePayload();
+    const pct = d.max > 0 ? Math.round((d.score / d.max) * 100) : 0;
+    const text = `I scored ${d.score}/${d.max} (${pct}%) on my daily habits today 🌱 #LifeBuilder`;
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(buildShareUrl()), '_blank');
+  }
+
+  // ── Read-only share view ──
+  function tryRenderShareView() {
+    const params  = new URLSearchParams(window.location.search);
+    const encoded = params.get('share');
+    if (!encoded) return false;
+
+    let payload;
+    try { payload = JSON.parse(decodeURIComponent(escape(atob(encoded)))); }
+    catch(e) { return false; }
+
+    // Hide the main app, show a share card
+    document.querySelector('.container').style.display = 'none';
+    document.getElementById('shareBackdrop').style.display = 'none';
+    document.getElementById('modalBackdrop').style.display = 'none';
+
+    const dateStr = payload.date
+      ? new Date(payload.date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+      : '';
+    const pct    = payload.max > 0 ? Math.round((payload.score / payload.max) * 100) : 0;
+    const done   = payload.tasks.filter(t => t.done);
+    const undone = payload.tasks.filter(t => !t.done);
+
+    const habitsHtml = [
+      ...done.map(t   => `<div class="share-habit-row done"><div class="share-habit-dot"></div>${escHtml(t.name)} <span style="margin-left:auto;font-size:0.75rem;opacity:.7">+${t.pts}pt${t.pts!==1?'s':''}</span></div>`),
+      ...undone.map(t => `<div class="share-habit-row undone"><div class="share-habit-dot"></div>${escHtml(t.name)}</div>`),
+    ].join('');
+
+    const perfectBadge = payload.score === payload.max && payload.max > 0
+      ? '<span style="display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;border-radius:20px;padding:3px 10px;font-size:0.75rem;font-weight:600;margin-top:6px;">✓ Perfect day!</span>'
+      : '';
+
+    const streakBadge = payload.streak > 1
+      ? `<span style="font-size:0.8rem;color:#f59e0b;font-weight:600;">🔥 ${payload.streak}-day streak</span>`
+      : '';
+
+    const view = document.createElement('div');
+    view.className = 'share-view';
+    view.innerHTML = `
+      <div class="share-card">
+        <div class="share-card-header">
+          <h2>Daily habits check-in</h2>
+          <p>${dateStr}</p>
+          ${streakBadge}
+        </div>
+        <div class="share-score-row">
+          <div class="share-score-big">${pct}%</div>
+          <div class="share-score-label">
+            <strong>${payload.score} / ${payload.max} pts</strong>
+            ${done.length} of ${payload.tasks.length} habits complete
+          </div>
+        </div>
+        <div class="share-habits">${habitsHtml}</div>
+        ${perfectBadge}
+        <div class="share-cta" style="margin-top:20px;">
+          Want to track your own habits? <a href="${window.location.href.split('?')[0]}">Try Life Builder →</a>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(view);
+    return true;
+  }
+
+  if (!tryRenderShareView()) {
+    render();
+  }
 </script>
 </body>
 </html>
